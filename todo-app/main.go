@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/joho/godotenv"
 
 	"todo-app/db"
 	"todo-app/handlers"
@@ -23,6 +26,10 @@ func main() {
 }
 
 func run() error {
+	if err := loadDotenv(); err != nil {
+		return err
+	}
+
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
 		return errors.New("DATABASE_URL is not set")
@@ -49,6 +56,8 @@ func run() error {
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	mux.HandleFunc("GET /todo-app", redirectToRoot)
+	mux.HandleFunc("GET /todo-app/", redirectToRoot)
 	todoHandler.RegisterRoutes(mux)
 
 	srv := &http.Server{
@@ -76,4 +85,16 @@ func run() error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return srv.Shutdown(shutdownCtx)
+}
+
+func redirectToRoot(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func loadDotenv() error {
+	err := godotenv.Load()
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("load .env: %w", err)
+	}
+	return nil
 }
