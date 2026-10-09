@@ -1,0 +1,41 @@
+{{/* The whole list: <ul> plus the empty-state message. Data: []models.Todo */}}
+{{define "todo-list"}}
+<ul id="todo-list" class="todo-list">
+  {{range .}}{{template "todo-item" .}}{{end}}
+</ul>
+<p class="empty">No tasks yet. Add one above!</p>
+{{end}}
+
+{{/* One row. Data: models.Todo */}}
+{{define "todo-item"}}
+<li id="todo-{{.ID}}" class="todo{{if .Completed}} completed{{end}}">
+  <input type="checkbox" {{if .Completed}}checked{{end}} aria-label="Mark as completed"
+         hx-patch="/todos/{{.ID}}/toggle" hx-target="#todo-{{.ID}}" hx-swap="outerHTML">
+  <span class="title">{{.Title}}</span>
+  <button type="button" class="btn"
+          hx-get="/todos/{{.ID}}/edit" hx-target="#todo-{{.ID}}" hx-swap="outerHTML">Edit</button>
+  <button type="button" class="btn btn-danger"
+          hx-delete="/todos/{{.ID}}" hx-target="#todo-{{.ID}}" hx-swap="outerHTML"
+          hx-confirm="Delete this todo?">Delete</button>
+</li>
+{{end}}
+
+{{/* Inline edit form that replaces the row. Data: models.Todo */}}
+{{define "edit-form"}}
+<li id="todo-{{.ID}}" class="todo editing">
+  <form class="edit-form" hx-put="/todos/{{.ID}}" hx-target="#todo-{{.ID}}" hx-swap="outerHTML">
+    <input type="text" name="title" value="{{.Title}}" maxlength="200" required autofocus>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn" hx-get="/todos" hx-target="#todo-container" hx-swap="innerHTML">Cancel</button>
+  </form>
+</li>
+{{end}}
+
+{{/* Error text, swapped into #message. Data: string */}}
+{{define "error"}}<p class="error">{{.}}</p>{{end}}
+
+{{/* Out-of-band swap: replaces the #message div with an empty one (clears old errors). */}}
+{{define "clear-message"}}<div id="message" role="alert" hx-swap-oob="true"></div>{{end}}
+
+{{/* A row plus clearing the message. Used by create, update and toggle. */}}
+{{define "todo-response"}}{{template "todo-item" .}}{{template "clear-message"}}{{end}}

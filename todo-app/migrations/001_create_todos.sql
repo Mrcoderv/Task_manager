@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS todos (
+    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title      TEXT NOT NULL CHECK (btrim(title) <> ''),
+    completed  BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

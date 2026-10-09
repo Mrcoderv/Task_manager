@@ -1,0 +1,77 @@
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --text: #1f2933;
+  --muted: #7b8794;
+  --primary: #2563eb;
+  --danger: #dc2626;
+  --border: #e4e7eb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container { max-width: 600px; margin: 0 auto; padding: 2rem 1rem; }
+h1 { text-align: center; margin-top: 0; }
+
+.add-form, .edit-form { display: flex; gap: 0.5rem; }
+.edit-form { flex: 1; }
+
+input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-danger { color: var(--danger); }
+
+.error {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.75rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 6px;
+}
+
+.todo-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+
+.todo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.todo .title { flex: 1; word-break: break-word; }
+.todo.completed .title { text-decoration: line-through; color: var(--muted); }
+
+.empty { text-align: center; color: var(--muted); }
+/* Hide the empty message whenever the list contains at least one <li>. */
+.todo-list:has(li) + .empty { display: none; }
+
+@media (max-width: 480px) {
+  .todo { flex-wrap: wrap; }
+  .edit-form { flex-wrap: wrap; }
+}
